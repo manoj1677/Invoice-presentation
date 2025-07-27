@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic 3-Way Invoice Matching Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Prevents scrollbars from showing up */
+        }
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            min-height: 100vh;
+            min-width: 100vw;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        /* Chat bubble styles */
+        .chat-bubble {
+            max-width: 75%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+        }
+        .chat-bubble-user {
+            background-color: #005A9E; /* Cognizant Blue */
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+            align-self: flex-end;
+        }
+        .chat-bubble-ai {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+            border-bottom-left-radius: 0.25rem;
+            align-self: flex-start;
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+        /* Custom Cognizant Colors */
+        .cognizant-blue { color: #005A9E; }
+        .bg-cognizant-blue { background-color: #005A9E; }
+        .bg-cognizant-dark-blue { background-color: #003366; }
+        .cognizant-green { color: #70AD47; }
+        .bg-cognizant-green { background-color: #70AD47; }
+        .cognizant-red { color: #FF0000; }
+        .bg-cognizant-red { background-color: #FF0000; }
+        .cognizant-light-blue { background-color: #CDE2F5; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center">
+
+    <!-- Slides Container -->
+    <div id="presentation-container" class="relative w-full h-screen">
+
+        <!-- Slide 1: Title -->
+        <div id="slide-1" class="slide active flex-col items-center justify-center bg-white p-8 text-center">
+            <div class="z-10">
+                <div class="mb-4">
+                    <svg class="w-24 h-24 mx-auto text-[#005A9E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 6V3m0 18v-3M5.636 5.636l1.414-1.414m10.304 10.304l1.414-1.414M5.636 18.364l1.414 1.414m10.304-10.304l1.414 1.414M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 cognizant-blue">Revolutionizing Accounts Payable</h1>
+                <p class="text-2xl md:text-3xl text-gray-600">An Introduction to Agentic 3-Way Invoice Matching</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: The Problem with Metrics -->
+        <div id="slide-2" class="slide flex-col items-center justify-center p-8 bg-gray-50">
+            <h2 class="text-4xl font-bold text-center mb-12 cognizant-blue">Manual Invoice Processing Challenges</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-16 w-full max-w-6xl">
+                <!-- Bar Chart -->
+                <div class="w-full md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
+                    <div class="flex justify-around items-end h-64 border-b border-gray-300">
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="text-sm font-bold text-[#003366]">$23</div>
+                            <div class="w-16 h-56 bg-[#005A9E] rounded-t-md" title="$23 per invoice"></div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                             <div class="text-sm text-gray-600">$4</div>
+                            <div class="w-16 h-10 bg-[#4A90E2] rounded-t-md" title="$4 per invoice"></div>
+                        </div>
+                         <div class="flex flex-col items-center gap-1">
+                            <div class="text-sm font-bold text-[#003366]">19</div>
+                            <div class="w-16 h-48 bg-[#005A9E] rounded-t-md" title="19 days"></div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <div class="text-sm text-gray-600">4</div>
+                            <div class="w-16 h-10 bg-[#4A90E2] rounded-t-md" title="4 days"></div>
+                        </div>
+                    </div>
+                     <div class="flex justify-around mt-2 text-sm font-semibold">
+                        <div>Cost ($ per invoice)</div>
+                        <div>Time (days)</div>
+                    </div>
+                     <div class="flex justify-center mt-4 gap-6 text-sm">
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#005A9E] rounded"></div>Manual</div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 bg-[#4A90E2] rounded"></div>Automated</div>
+                    </div>
+                </div>
+                <!-- Metrics Text -->
+                <div class="w-full md:w-1/2 space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-cognizant-blue text-white rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold cognizant-blue">High Cost</h3>
+                            <p class="text-md text-gray-600">$13–$40 per invoice manually processed.</p>
+                        </div>
+                    </div>
+                     <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-cognizant-blue text-white rounded-full flex items-center justify-center">
+                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold cognizant-blue">Slow Processing</h3>
+                            <p class="text-md text-gray-600">19 days for manual processing vs 4 days when automated.</p>
+                        </div>
+                    </div>
+                     <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-cognizant-blue text-white rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6.364-6.364l-1.414-1.414M20.364 15.364L19 14M12 9v2m-6.364 6.364l-1.414 1.414M20.364 8.636L19 10m-14 0h2m14 0h2M12 3v2m-6.364 6.364L7 10m12.364 0l-1.414-1.414"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold cognizant-blue">Fraud & Risk</h3>
+                            <p class="text-md text-gray-600">Fraud can cost up to 5% of revenue; manual errors lead to compliance issues.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-cognizant-blue text-white rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold cognizant-blue">High Volume & Scale</h3>
+                            <p class="text-md text-gray-600">Large enterprises can process thousands of invoices daily, making manual work impossible to scale.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: EMBEDDED IMAGE - Simplified Accounts Payable Process -->
+        <div id="slide-3" class="slide flex-col items-center justify-center p-8 bg-gray-50">
+             <div class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg">
+                <img src="images/simplified-ap-process.png" 
+                     alt="A Simplified Accounts Payable Process Flow" 
+                     class="w-full h-auto rounded-md">
+            </div>
+        </div>
+
+        <!-- Slide 4: MERGED & ANIMATED WORKFLOW -->
+        <div id="slide-4" class="slide flex-col items-center justify-center p-8 bg-cognizant-dark-blue text-white">
+            <h2 class="text-4xl font-bold text-center mb-16">Our Intelligent Automation in Action</h2>
+            <div class="flex items-center justify-center gap-2 w-full max-w-7xl">
+                <!-- Step 1: Ingest -->
+                <div class="flex flex-col items-center text-center p-4">
+                    <div class="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center shadow-lg mb-2">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold">Ingest</h3>
+                    <p class="text-sm text-gray-300">Collect invoices & POs</p>
+                </div>
+
+                <div class="text-gray-500 text-2xl font-bold mx-2">→</div>
+
+                <!-- Animated Smart Engine -->
+                <div class="relative p-6 rounded-2xl shadow-2xl flex items-center gap-4 border border-blue-400 bg-blue-900/30">
+                    <svg class="absolute inset-0 w-full h-full text-blue-400 opacity-20 animate-spin [animation-duration:20s]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                    <div class="relative z-10 flex flex-col items-center text-center p-4 bg-blue-700 rounded-xl">
+                        <h3 class="text-xl font-bold">Understand</h3>
+                        <p class="text-sm text-blue-200">Classify & extract data</p>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center text-center p-4 bg-teal-600 rounded-xl">
+                        <h3 class="text-xl font-bold">Retrieve</h3>
+                        <p class="text-sm text-teal-100">Query documents</p>
+                    </div>
+                    <div class="relative z-10 flex flex-col items-center text-center p-4 bg-blue-700 rounded-xl">
+                        <h3 class="text-xl font-bold">Match</h3>
+                        <p class="text-sm text-blue-200">Reason over data</p>
+                    </div>
+                </div>
+
+                <div class="text-gray-500 text-2xl font-bold mx-2">→</div>
+
+                <!-- Step 5: Learn -->
+                <div class="flex flex-col items-center text-center p-4">
+                     <div class="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center shadow-lg mb-2">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold">Learn</h3>
+                    <p class="text-sm text-gray-300">Continuous improvement</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 5: EMBEDDED IMAGE - Agentic AI System -->
+        <div id="slide-5" class="slide flex-col items-center justify-center p-8 bg-gray-50">
+            <div class="w-full max-w-5xl p-4 bg-white rounded-lg shadow-lg">
+                <img src="images/agentic-ai-system.png" 
+                     alt="Agentic AI 3-way Invoice Matching System" 
+                     class="w-full h-auto rounded-md">
+            </div>
+        </div>
+
+        <!-- Slide 6: Comparison -->
+        <div id="slide-6" class="slide flex-col items-center justify-center p-8">
+            <h2 class="text-4xl font-bold text-center mb-8 cognizant-blue">A New Paradigm: Agentic AI vs. Traditional RPA</h2>
+            <div class="w-full max-w-4xl bg-white rounded-xl shadow-2xl overflow-hidden">
+                <div class="grid grid-cols-2">
+                    <div class="p-6 bg-gray-200">
+                        <h3 class="text-2xl font-bold text-gray-600">Traditional RPA</h3>
+                    </div>
+                    <div class="p-6 bg-cognizant-green text-white">
+                        <h3 class="text-2xl font-bold">Agentic AI</h3>
+                    </div>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="grid grid-cols-2 p-6 items-center">
+                        <div class="pr-4"><strong class="text-lg">Data Handling:</strong> Rigid, template-based workflows.</div>
+                        <div class="pl-4 text-gray-800"><strong class="text-lg">Data Handling:</strong> Handles any format with a single, universal model.</div>
+                    </div>
+                    <div class="grid grid-cols-2 p-6 items-center">
+                        <div class="pr-4"><strong class="text-lg">Decision Making:</strong> Follows a rigid "if-then" script.</div>
+                        <div class="pl-4 text-gray-800"><strong class="text-lg">Decision Making:</strong> Makes dynamic, reasoned decisions.</div>
+                    </div>
+                    <div class="grid grid-cols-2 p-6 items-center">
+                        <div class="pr-4"><strong class="text-lg">Adaptability:</strong> Brittle. Breaks with small UI or format changes.</div>
+                        <div class="pl-4 text-gray-800"><strong class="text-lg">Adaptability:</strong> Highly adaptable, learns new rules on the fly.</div>
+                    </div>
+                    <div class="grid grid-cols-2 p-6 items-center">
+                        <div class="pr-4"><strong class="text-lg">Human Interaction:</strong> Stops on error, requires human intervention.</div>
+                        <div class="pl-4 text-gray-800"><strong class="text-lg">Human Interaction:</strong> Collaborates with humans on exceptions.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 7: Technology with Icons -->
+        <div id="slide-7" class="slide flex-col items-center justify-center p-8 bg-cognizant-dark-blue text-white">
+            <h2 class="text-4xl font-bold text-center mb-12">The Technology Powering Our Solution</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl text-center">
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 mb-3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#3776AB" d="M12 24c6.627 0 12-5.373 12-12S18.627 0 12 0 0 5.373 0 12s5.373 12 12 12z"/><path fill="#FFD43B" d="M12 18.2c-3.323 0-6.22-1.9-6.22-4.2s2.897-4.2 6.22-4.2c3.323 0 6.22 1.9 6.22 4.2s-2.897 4.2-6.22 4.2zm0-7.6c-2.76 0-5.22 1.6-5.22 3.4s2.46 3.4 5.22 3.4 5.22-1.6 5.22-3.4-2.46-3.4-5.22-3.4z"/><path fill="#3776AB" d="M12 5.8c3.323 0 6.22 1.9 6.22 4.2s-2.897 4.2-6.22 4.2-6.22-1.9-6.22-4.2 2.897-4.2 6.22-4.2zm0 7.6c2.76 0 5.22-1.6 5.22-3.4s-2.46-3.4-5.22-3.4-5.22 1.6-5.22 3.4 2.46 3.4 5.22 3.4z"/><circle fill="#FFFFFF" cx="9.5" cy="8.5" r="1"/><circle fill="#FFFFFF" cx="14.5" cy="15.5" r="1"/></svg>
+                    <h3 class="text-2xl font-bold">Python</h3><p>Core Language</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 mb-3 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <h3 class="text-2xl font-bold">Streamlit</h3><p>Interactive UI</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 mb-3 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    <h3 class="text-2xl font-bold">LangGraph</h3><p>Autonomous Workflow</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 mb-3 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <h3 class="text-2xl font-bold">FastAPI</h3><p>Simulated ERP API</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 mb-3 text-purple-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <h3 class="text-2xl font-bold">Google Gemini</h3><p>Intelligence Layer</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 mb-3 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    <h3 class="text-2xl font-bold">Pandas & Requests</h3><p>Data & API Calls</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: NEW Impact & Benefits -->
+        <div id="slide-8" class="slide flex-col items-center justify-center p-8">
+            <h2 class="text-4xl font-bold text-center mb-12 cognizant-blue">Impact & Benefits of Automation</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full">
+                <div class="bg-white p-6 rounded-lg shadow-lg flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 cognizant-light-blue text-cognizant-blue rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold cognizant-blue">Lower Cost & Faster Cycle</h3>
+                        <p class="text-gray-600">Up to 80% reduction in processing cost; cycle drops from 19 to <4 days.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 cognizant-light-blue text-cognizant-blue rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold cognizant-blue">Reduced Errors & Duplicates</h3>
+                        <p class="text-gray-600">Automated extraction eliminates manual data entry mistakes.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 cognizant-light-blue text-cognizant-blue rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold cognizant-blue">Early Payment Discounts</h3>
+                        <p class="text-gray-600">Faster approvals enable capture of discount opportunities.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg flex items-start gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 cognizant-light-blue text-cognizant-blue rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6.364-6.364l-1.414-1.414M20.364 15.364L19 14M12 9v2m-6.364 6.364l-1.414 1.414M20.364 8.636L19 10m-14 0h2m14 0h2M12 3v2m-6.364 6.364L7 10m12.364 0l-1.414-1.414"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold cognizant-blue">Fraud Mitigation</h3>
+                        <p class="text-gray-600">3-way matching catches mismatches & prevents scams.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg flex items-start gap-4 md:col-span-2">
+                    <div class="flex-shrink-0 w-12 h-12 cognizant-light-blue text-cognizant-blue rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold cognizant-blue">Better Supplier Relationships</h3>
+                        <p class="text-gray-600">Transparency & on-time payments build trust and strengthen partnerships.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Key Takeaway -->
+        <div id="slide-9" class="slide flex-col items-center justify-center p-8 bg-cognizant-dark-blue text-white" style="background-image: radial-gradient(circle at top, #0078D4, #003366);">
+            <div class="text-center max-w-4xl bg-black/20 backdrop-blur-sm p-12 rounded-2xl border border-blue-400/50">
+                 <svg class="w-16 h-16 mx-auto mb-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <p class="text-4xl font-bold leading-tight">Agentic AI moves beyond simple task repetition to deliver <span class="cognizant-green">true process automation</span> and <span class="cognizant-green">intelligent decision-making.</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Q&A -->
+        <div id="slide-10" class="slide flex-col items-center justify-center p-8">
+            <div class="text-center">
+                <h2 class="text-6xl font-bold mb-8 cognizant-blue">Q&A</h2>
+                <div class="text-2xl space-y-4 text-gray-600">
+                    <p class="font-semibold">Your Company Name</p>
+                    <p>your.email@company.com</p>
+                    <p>www.yourwebsite.com</p>
+                </div>
+                 <div class="mt-8 text-sm text-gray-400">[Your Company Logo Placeholder]</div>
+            </div>
+        </div>
+
+        <!-- Slide 11: AI Assistant -->
+        <div id="slide-11" class="slide flex-col items-center justify-center p-8 bg-gray-900 text-white">
+            <div class="w-full max-w-2xl h-[80vh] flex flex-col bg-white rounded-xl shadow-2xl">
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-2xl font-bold text-center text-gray-800">Ask the AI Assistant</h2>
+                    <p class="text-sm text-center text-gray-500">Ask anything about this presentation.</p>
+                </div>
+                <div id="chat-window" class="flex-1 p-6 space-y-4 overflow-y-auto">
+                    <!-- Chat messages will be appended here -->
+                    <div class="chat-bubble chat-bubble-ai">
+                        Hello! I'm an AI assistant with knowledge about this presentation. How can I help you?
+                    </div>
+                </div>
+                <div id="typing-indicator-container" class="px-6 pb-2 hidden">
+                    <div class="chat-bubble-ai inline-block">
+                        <div class="typing-indicator">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t border-gray-200">
+                    <div class="flex gap-2">
+                        <input type="text" id="chat-input" class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800" placeholder="Type your question...">
+                        <button id="send-btn" class="px-6 py-2 bg-cognizant-blue text-white font-semibold rounded-full hover:bg-cognizant-dark-blue transition-colors disabled:opacity-50">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <button id="prev-btn" class="fixed bottom-4 left-4 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <button id="next-btn" class="fixed bottom-4 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors z-20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+    
+    <!-- Slide Counter -->
+    <div id="slide-counter" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-3 py-1 rounded-full shadow-lg z-20"></div>
+
+    <script>
+        // --- Combined Presentation and AI Assistant Logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Presentation Logic ---
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const slideCounter = document.getElementById('slide-counter');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                const newSlide = slides[index];
+                if (newSlide) newSlide.classList.add('active');
+                slideCounter.textContent = `${index + 1} / ${totalSlides}`;
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalSlides - 1;
+                prevBtn.classList.toggle('opacity-50', index === 0);
+                nextBtn.classList.toggle('opacity-50', index === totalSlides - 1);
+            }
+
+            function nextSlide() {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            }
+
+            function prevSlide() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            }
+
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') nextSlide();
+                else if (e.key === 'ArrowLeft') prevSlide();
+            });
+
+            showSlide(currentSlide);
+
+            // --- AI Assistant Chat Logic ---
+            const chatWindow = document.getElementById('chat-window');
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('send-btn');
+            const typingIndicator = document.getElementById('typing-indicator-container');
+
+            const presentationContext = `
+                Intelligent 3-Way Invoice Matching: Reducing costs & fraud through agentic AI.
+                Agenda: Problem & Motivation, Solution Overview, 3-Way Matching, Impact & Benefits, AI vs RPA, Technology Stack, Conclusion.
+                Manual Invoice Processing Challenges: High cost ($13–$40 per invoice), Slow processing (19 days manual vs 4 days automated), Fraud risk (costs up to 5% of revenue), and inability to handle high volume at scale.
+                Simplified Accounts Payable Process: Starts with Purchase requisition, PO, and GRN. This feeds into the 3-Way matching process (PO Matching, GRN matching, Invoice Creation, Invoice Approval). The output is releasing the invoice for the payment process.
+                Intelligent AP Automation Workflow: A 5-step process: Ingest, Understand, Retrieve, Match, and Learn.
+                Agentic AI 3-way invoice matching system: This is a multi-agent system. Agent 1 reads the invoice and calls ERP APIs for PO and GRN data. Agent 2 performs the matching. If it fails, Agent 3 handles the exception and Agent 4 routes a notification. If it succeeds, Agent 5 handles the approval and calls the ERP for payment processing.
+                What is 3-Way Matching?: It compares the Purchase Order, Goods Receipt, and Invoice.
+                Impact & Benefits: Lower cost & faster cycle, reduced errors, fraud mitigation, early payment discounts, better supplier relationships.
+                Agentic AI vs RPA: RPA follows static rules. Agentic AI uses ML to reason, learn, and handle exceptions.
+                Technology Stack: Python, Streamlit, LangGraph, FastAPI, Google Gemini, Pandas & Requests.
+                Conclusion: Transform AP with agentic AI to deliver scalable automation and reduce cost/fraud.
+            `;
+
+            async function askGemini(question) {
+                typingIndicator.style.display = 'block';
+                sendBtn.disabled = true;
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+
+                const prompt = `You are an expert AI assistant for a presentation about "Intelligent 3-Way Invoice Matching." Your knowledge is based SOLELY on the following context. Do not use any external information. Answer the user's question concisely based on the context provided.\n\nContext:\n${presentationContext}\n\nQuestion: ${question}\n\nAnswer:`;
+                
+                let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // API key is handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    let aiResponse = "Sorry, I couldn't generate a response. Please try again.";
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        aiResponse = result.candidates[0].content.parts[0].text;
+                    }
+                    addMessage(aiResponse, 'ai');
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    addMessage("I'm having trouble connecting right now. Please try again later.", 'ai');
+                } finally {
+                    typingIndicator.style.display = 'none';
+                    sendBtn.disabled = false;
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                }
+            }
+
+            function addMessage(text, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('chat-bubble', sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai');
+                messageElement.textContent = text;
+                chatWindow.appendChild(messageElement);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+
+            function handleSend() {
+                const question = chatInput.value.trim();
+                if (question) {
+                    addMessage(question, 'user');
+                    chatInput.value = '';
+                    chatInput.disabled = true;
+                    askGemini(question);
+                }
+            }
+
+            sendBtn.addEventListener('click', handleSend);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleSend();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
